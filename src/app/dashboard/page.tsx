@@ -961,14 +961,24 @@ export default function DashboardPage() {
 
   // Upload image to MinIO S3 via API route (falls back to Base64 if upload fails)
   const uploadImageAndGetUrl = async (file: File, path: string): Promise<string> => {
+    const user = auth?.currentUser;
+    if (!user) {
+      console.warn("Usuário não autenticado, salvando em Base64.");
+      return optimizeAndToBase64(file);
+    }
     try {
+      const idToken = await user.getIdToken();
       const blob = await optimizeImageBlob(file);
       const optimizedFile = new File([blob], file.name, { type: "image/jpeg" });
       const formData = new FormData();
       formData.append("file", optimizedFile);
       formData.append("path", path);
-      const res = await fetch("/api/upload", { method: "POST", body: formData });
-      if (!res.ok) throw new Error(await res.text());
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${idToken}` },
+        body: formData,
+      });
+      if (!res.ok) throw new Error((await res.json()).error || res.statusText);
       const { url } = await res.json();
       return url;
     } catch (err) {
