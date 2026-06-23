@@ -12,9 +12,7 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-// Check if variables are configured
 export const isFirebaseConfigured = 
-  typeof window !== "undefined" && 
   !!process.env.NEXT_PUBLIC_FIREBASE_API_KEY && 
   !!process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
 
@@ -27,9 +25,11 @@ if (isFirebaseConfigured) {
   try {
     app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
     auth = getAuth(app);
-    setPersistence(auth, browserLocalPersistence).catch((err) => {
-      console.error("Firebase setPersistence error:", err);
-    });
+    if (typeof window !== "undefined") {
+      setPersistence(auth, browserLocalPersistence).catch((err) => {
+        console.error("Firebase setPersistence error:", err);
+      });
+    }
     db = getFirestore(app);
     storage = getStorage(app);
   } catch (err) {
