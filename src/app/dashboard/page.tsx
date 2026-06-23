@@ -5,7 +5,7 @@ import Link from "next/link";
 import styles from "./dashboard.module.css";
 import { Service, Lead, Professional, Expense, Appointment, Product } from "@/data/mockData";
 import { PROFESSIONAL_CATEGORIES, normalizeCategory } from "@/data/categories";
-import { auth, isFirebaseConfigured } from "@/lib/firebase";
+import { auth, isFirebaseConfigured, storage } from "@/lib/firebase";
 import QRCode from "qrcode";
 import { 
   signInWithEmailAndPassword, 
@@ -13,6 +13,7 @@ import {
   signOut,
   onAuthStateChanged
 } from "firebase/auth";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { 
   getLeads, 
   getProfessionalById, 
@@ -227,6 +228,7 @@ export default function DashboardPage() {
   const [profilePixKeyType, setProfilePixKeyType] = useState<"cpf" | "cnpj" | "celular" | "email" | "chave_aleatoria" | "">("");
   const [profilePixKey, setProfilePixKey] = useState("");
   const [isSavingProfile, setIsSavingProfile] = useState(false);
+  const [isUploadingLogo, setIsUploadingLogo] = useState(false);
   const [isImprovingBio, setIsImprovingBio] = useState(false);
   const [galleryTitle, setGalleryTitle] = useState("");
   const [galleryFile, setGalleryFile] = useState<File | null>(null);
@@ -905,6 +907,71 @@ export default function DashboardPage() {
     });
   };
 
+  // Helper to optimize and convert image to Blob (JPEG)
+  const optimizeImageBlob = (file: File): Promise<Blob> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          const MAX_WIDTH = 800;
+          const MAX_HEIGHT = 800;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > MAX_WIDTH) {
+              height *= MAX_WIDTH / width;
+              width = MAX_WIDTH;
+            }
+          } else {
+            if (height > MAX_HEIGHT) {
+              width *= MAX_HEIGHT / height;
+              height = MAX_HEIGHT;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          if (ctx) {
+            ctx.drawImage(img, 0, 0, width, height);
+            canvas.toBlob((blob) => {
+              if (blob) {
+                resolve(blob);
+              } else {
+                reject(new Error("Erro ao gerar Blob da imagem."));
+              }
+            }, "image/jpeg", 0.7);
+          } else {
+            reject(new Error("Erro ao obter contexto 2D do Canvas."));
+          }
+        };
+        img.onerror = () => {
+          reject(new Error("Erro ao carregar a imagem."));
+        };
+        img.src = e.target?.result as string;
+      };
+      reader.onerror = () => {
+        reject(new Error("Erro ao ler o arquivo."));
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  // Helper to upload image to Firebase Storage (falls back to Base64 if Firebase or storage is not available)
+  const uploadImageAndGetUrl = async (file: File, path: string): Promise<string> => {
+    if (!isFirebaseConfigured || !storage) {
+      console.warn("Firebase Storage não configurado. Salvando em Base64 localmente.");
+      return optimizeAndToBase64(file);
+    }
+    const blob = await optimizeImageBlob(file);
+    const storageRef = ref(storage, path);
+    await uploadBytes(storageRef, blob);
+    return getDownloadURL(storageRef);
+  };
+
   // Improve Bio with AI Gemini
   const handleImproveBioWithAI = async () => {
     if (!profileBio.trim()) {
@@ -966,10 +1033,10 @@ Biografia original: "${profileBio}"`
 
     setIsUploadingGallery(true);
     try {
-      const base64Img = await optimizeAndToBase64(galleryFile);
+      const imageUrl = await uploadImageAndGetUrl(galleryFile, `professionals/${professional.id}/gallery/${Date.now()}_${galleryFile.name}`);
       const newPhoto = {
         title: galleryTitle.trim(),
-        imageUrl: base64Img
+        imageUrl: imageUrl
       };
 
       const updatedGallery = [...(professional.gallery || []), newPhoto];
@@ -1553,9 +1620,10 @@ Biografia original: "${profileBio}"`
     setIsUploadingProductPhoto(true);
     try {
       const newUrls = [...newProductImageUrls];
+      if (!professional) return;
       for (let i = 0; i < files.length; i++) {
-        const base64 = await optimizeAndToBase64(files[i]);
-        newUrls.push(base64);
+        const url = await uploadImageAndGetUrl(files[i], `professionals/${professional.id}/products/${Date.now()}_${files[i].name}`);
+        newUrls.push(url);
       }
       setNewProductImageUrls(newUrls);
     } catch (err) {
@@ -4058,7 +4126,7 @@ Mensagem atual: "${billingMessage}"`
                       width: "80px", 
                       height: "80px", 
                       borderRadius: "12px", 
-                      border: "2px dashed var(--border-color)", 
+                      border: "1px dashed var(--border-color)", 
                       display: "flex", 
                       alignItems: "center", 
                       justifyContent: "center", 
@@ -4066,7 +4134,11 @@ Mensagem atual: "${billingMessage}"`
                       background: "var(--background-alt)",
                       position: "relative"
                     }}>
-                      {profileLogoUrl ? (
+                      {isUploadingLogo ? (
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                          <span className={styles.spinner} style={{ width: "24px", height: "24px", color: "var(--accent-color)" }} />
+                        </div>
+                      ) : profileLogoUrl ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img 
                           src={profileLogoUrl} 
@@ -4082,26 +4154,37 @@ Mensagem atual: "${billingMessage}"`
                       <div style={{ display: "flex", gap: "0.75rem" }}>
                         <label 
                           className={styles.backBtn} 
-                          style={{ cursor: "pointer", display: "inline-flex", padding: "0.5rem 0.9rem", fontSize: "0.85rem" }}
+                          style={{ 
+                            cursor: isUploadingLogo ? "not-allowed" : "pointer", 
+                            display: "inline-flex", 
+                            padding: "0.5rem 0.9rem", 
+                            fontSize: "0.85rem",
+                            opacity: isUploadingLogo ? 0.6 : 1,
+                            pointerEvents: isUploadingLogo ? "none" : "auto"
+                          }}
                         >
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ marginRight: "4px" }}>
                             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                             <polyline points="17 8 12 3 7 8"></polyline>
                             <line x1="12" y1="3" x2="12" y2="15"></line>
                           </svg>
-                          Selecionar Imagem
+                          {isUploadingLogo ? "Enviando..." : "Selecionar Imagem"}
                           <input 
                             type="file" 
                             accept="image/*" 
                             style={{ display: "none" }} 
+                            disabled={isUploadingLogo}
                             onChange={async (e) => {
                               const file = e.target.files?.[0];
-                              if (file) {
+                              if (file && professional) {
+                                setIsUploadingLogo(true);
                                 try {
-                                  const base64 = await optimizeAndToBase64(file);
-                                  setProfileLogoUrl(base64);
+                                  const url = await uploadImageAndGetUrl(file, `professionals/${professional.id}/logo_${Date.now()}.jpg`);
+                                  setProfileLogoUrl(url);
                                 } catch (err: any) {
                                   alert(err.message || "Erro ao processar imagem.");
+                                } finally {
+                                  setIsUploadingLogo(false);
                                 }
                               }
                             }}
@@ -4113,12 +4196,15 @@ Mensagem atual: "${billingMessage}"`
                             type="button"
                             onClick={() => setProfileLogoUrl("")}
                             className={styles.backBtn}
+                            disabled={isUploadingLogo}
                             style={{ 
                               borderColor: "#fecaca", 
                               color: "#dc2626", 
                               background: "rgba(220, 38, 38, 0.05)",
                               padding: "0.5rem 0.9rem",
-                              fontSize: "0.85rem"
+                              fontSize: "0.85rem",
+                              opacity: isUploadingLogo ? 0.6 : 1,
+                              cursor: isUploadingLogo ? "not-allowed" : "pointer"
                             }}
                           >
                             Remover
