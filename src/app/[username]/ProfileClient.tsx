@@ -647,6 +647,7 @@ export default function ProfileClient({
       </section>
 
       {/* Gallery / Portfólio Section */}
+      {professional.gallery && professional.gallery.length > 0 && (
       <section className={styles.gallerySection}>
         <h2 className={styles.sectionTitle}>Trabalhos Recentes</h2>
         <div className={styles.galleryGrid}>
@@ -675,6 +676,7 @@ export default function ProfileClient({
           ))}
         </div>
       </section>
+      )}
 
       {/* Service & Product Catalog Section */}
       <section className={styles.servicesSection}>
@@ -987,15 +989,13 @@ export default function ProfileClient({
             </div>
 
             <button type="submit" className={`${styles.submitBtn} btn-glow`}>
-              Enviar Proposta & Chamar no WhatsApp 💬
+              Enviar e Chamar no WhatsApp
             </button>
 
             {professional.stripeAccountId && professional.stripeConnectionStatus === "completed" && selectedService && selectedService.price > 0 && (
               <>
-                <div style={{ textAlign: "center", margin: "0.6rem 0" }}>
-                  <span style={{ fontSize: "0.8rem", color: "var(--foreground-muted)" }}>ou</span>
-                </div>
-                
+                <div className={styles.orDivider}><span>ou pague agora</span></div>
+
                 {checkoutError && (
                   <p style={{ color: "#dc2626", fontSize: "0.82rem", textAlign: "center", marginBottom: "0.5rem", fontWeight: "bold" }}>
                     ⚠ {checkoutError}
@@ -1006,50 +1006,32 @@ export default function ProfileClient({
                   type="button"
                   onClick={() => handleCheckoutStripe("servico")}
                   disabled={checkoutLoading}
-                  className={`${styles.submitBtn}`}
-                  style={{
-                    background: "linear-gradient(135deg, #635bff, #7a73ff)",
-                    borderColor: "#635bff",
-                    color: "white",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: "8px",
-                    width: "100%"
-                  }}
+                  className={`${styles.submitBtn} btn-glow`}
+                  style={{ background: "linear-gradient(135deg, #635bff, #7a73ff)", borderColor: "#635bff" }}
                 >
                   {checkoutLoading ? "Processando..." : `💳 Pagar R$ ${selectedService.price.toFixed(2)} via Cartão / Pix`}
                 </button>
               </>
             )}
-            
-            <div style={{ textAlign: "center", margin: "0.4rem 0" }}>
-              <span style={{ fontSize: "0.8rem", color: "var(--foreground-muted)" }}>ou</span>
-            </div>
+
+            <div className={styles.orDivider}><span>ou</span></div>
 
             <a
-              href={`https://wa.me/${professional.whatsapp}?text=${encodeURIComponent(`Olá ${professional.name}! Gostaria de tirar uma dúvida sobre seus serviços de ${selectedService ? selectedService.name : professional.category}.`)}`}
+              href={`https://wa.me/${professional.whatsapp}?text=${encodeURIComponent(`Olá ${professional.name}! Gostaria de tirar uma dúvida sobre seus serviços.`)}`}
               target="_blank"
               rel="noopener noreferrer"
-              className={styles.btnEstimate}
-              style={{ 
-                width: "100%", 
-                padding: "0.6rem", 
-                fontSize: "0.85rem", 
-                display: "flex", 
-                alignItems: "center", 
-                justifyContent: "center",
-                background: "none",
-                borderColor: "var(--border-color)",
-                color: "var(--primary)"
-              }}
+              className={styles.btnWaDirect}
               onClick={() => setIsEstimateModalOpen(false)}
             >
-              ⚡ Ir Direto para o WhatsApp (Sem preencher)
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+                <path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.116 1.524 5.843L.057 23.882l6.186-1.448A11.94 11.94 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 0 1-5.006-1.371l-.359-.214-3.724.871.887-3.637-.234-.373A9.818 9.818 0 1 1 12 21.818z"/>
+              </svg>
+              Chamar direto no WhatsApp
             </a>
 
-            <p className={styles.modalHelperText} style={{ fontSize: "0.72rem", textAlign: "center", marginTop: "0.6rem", opacity: 0.85 }}>
-              * Enviar a proposta registra seu contato no painel do profissional para que ele possa acompanhar seu atendimento.
+            <p className={styles.modalHelperText}>
+              Ao enviar a proposta, seu contato é registrado no painel do profissional.
             </p>
           </form>
         </div>

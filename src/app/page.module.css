@@ -578,6 +578,124 @@
   transform: translateX(3px);
 }
 
+/* Advanced filters row */
+.filtersRow {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.filterPill {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 0.45rem 0.9rem;
+  backdrop-filter: blur(8px);
+  transition: border-color 0.2s ease;
+}
+
+.filterPill:focus-within {
+  border-color: var(--primary);
+}
+
+.filterLabel {
+  font-size: 0.82rem;
+  color: var(--foreground-muted);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.filterSelect {
+  background: transparent;
+  border: none;
+  color: var(--foreground);
+  font-size: 0.85rem;
+  font-weight: 700;
+  outline: none;
+  cursor: pointer;
+}
+
+.filterSelect option {
+  background: var(--background-alt);
+  color: var(--foreground);
+}
+
+/* Directory Tabs (Serviços / Produtos) */
+.directoryTabs {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 2.5rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0;
+}
+
+.directoryTab {
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: var(--foreground-muted);
+  padding: 0.7rem 1.5rem;
+  font-weight: 800;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: -1px;
+  border-radius: 0;
+  white-space: nowrap;
+}
+
+.directoryTab:hover {
+  color: var(--foreground);
+}
+
+.directoryTabActive {
+  border-bottom-color: var(--primary);
+  color: var(--primary);
+}
+
+/* Skeleton shimmer animation */
+@keyframes shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+.skeletonShimmer {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite linear;
+  border-radius: 6px;
+}
+
+/* Product image placeholder (no photo) */
+.productImgPlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: var(--foreground-muted);
+  opacity: 0.4;
+}
+
+.productImgPlaceholder svg {
+  width: 40px;
+  height: 40px;
+}
+
+.productImgPlaceholder span {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
 /* Call to Action Section (Friendly Light card layout) */
 .ctaWrapper {
   margin: 6rem 0 4rem 0;

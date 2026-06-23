@@ -160,7 +160,7 @@ export default function HomePage() {
         <section className={styles.hero}>
           <div className={styles.heroBadge}>
             <span className={styles.heroBadgeDot}></span>
-            <span>✨ Central do Autônomo B2B</span>
+            <span>Profissionais locais verificados</span>
           </div>
           <h1 className={`${styles.heroTitle} text-gradient`}>
             <span>Encontre profissionais</span>
@@ -208,34 +208,32 @@ export default function HomePage() {
             </div>
 
             {/* Advanced Filters Row */}
-            <div style={{ display: "flex", gap: "1rem", marginTop: "1rem", flexWrap: "wrap", justifyContent: "center" }}>
-              {/* Rating Selector */}
-              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "10px", padding: "0.4rem 0.8rem" }}>
-                <span style={{ fontSize: "0.85rem", color: "var(--foreground-muted)", fontWeight: 600 }}>Nota Mínima:</span>
+            <div className={styles.filtersRow}>
+              <div className={styles.filterPill}>
+                <span className={styles.filterLabel}>Nota mínima</span>
                 <select
                   value={minRating}
                   onChange={(e) => setMinRating(parseFloat(e.target.value) || 0)}
-                  style={{ background: "transparent", border: "none", color: "var(--foreground)", fontSize: "0.85rem", fontWeight: 700, outline: "none", cursor: "pointer" }}
+                  className={styles.filterSelect}
                 >
-                  <option value="0" style={{ background: "var(--background-alt)", color: "var(--foreground)" }}>Qualquer nota</option>
-                  <option value="4" style={{ background: "var(--background-alt)", color: "var(--foreground)" }}>⭐ 4.0+ Estrelas</option>
-                  <option value="4.5" style={{ background: "var(--background-alt)", color: "var(--foreground)" }}>⭐ 4.5+ Estrelas</option>
-                  <option value="4.8" style={{ background: "var(--background-alt)", color: "var(--foreground)" }}>⭐ 4.8+ Estrelas</option>
+                  <option value="0">Qualquer</option>
+                  <option value="4">⭐ 4.0+</option>
+                  <option value="4.5">⭐ 4.5+</option>
+                  <option value="4.8">⭐ 4.8+</option>
                 </select>
               </div>
 
-              {/* Sort Selector */}
-              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "10px", padding: "0.4rem 0.8rem" }}>
-                <span style={{ fontSize: "0.85rem", color: "var(--foreground-muted)", fontWeight: 600 }}>Ordenar por:</span>
+              <div className={styles.filterPill}>
+                <span className={styles.filterLabel}>Ordenar por</span>
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  style={{ background: "transparent", border: "none", color: "var(--foreground)", fontSize: "0.85rem", fontWeight: 700, outline: "none", cursor: "pointer" }}
+                  className={styles.filterSelect}
                 >
-                  <option value="relevancia" style={{ background: "var(--background-alt)", color: "var(--foreground)" }}>Relevância</option>
-                  <option value="nota" style={{ background: "var(--background-alt)", color: "var(--foreground)" }}>Melhor Nota</option>
-                  <option value="avaliacoes" style={{ background: "var(--background-alt)", color: "var(--foreground)" }}>Mais Avaliados</option>
-                  <option value="nome" style={{ background: "var(--background-alt)", color: "var(--foreground)" }}>Nome (A-Z)</option>
+                  <option value="relevancia">Relevância</option>
+                  <option value="nota">Melhor nota</option>
+                  <option value="avaliacoes">Mais avaliados</option>
+                  <option value="nome">Nome A–Z</option>
                 </select>
               </div>
             </div>
@@ -321,47 +319,20 @@ export default function HomePage() {
         <section id="directory-section" style={{ paddingBottom: "4rem", scrollMarginTop: "90px" }}>
           
           {/* Tab Selector: Services vs Products */}
-          <div style={{
-            display: "flex",
-            justifyContent: "center",
-            gap: "1rem",
-            marginBottom: "2.5rem",
-            borderBottom: "1px solid var(--border-color)",
-            paddingBottom: "0.5rem"
-          }}>
+          <div className={styles.directoryTabs}>
             <button
               type="button"
               onClick={() => setDirectoryTab("servicos")}
-              style={{
-                background: "none",
-                border: "none",
-                borderBottom: directoryTab === "servicos" ? "3px solid var(--primary)" : "3px solid transparent",
-                color: directoryTab === "servicos" ? "var(--primary)" : "var(--foreground-muted)",
-                padding: "0.6rem 1.5rem",
-                fontWeight: 800,
-                fontSize: "1.1rem",
-                cursor: "pointer",
-                transition: "all 0.2s ease"
-              }}
+              className={`${styles.directoryTab} ${directoryTab === "servicos" ? styles.directoryTabActive : ""}`}
             >
-              🛠️ Encontrar Serviços ({filteredProfs.length})
+              Serviços ({filteredProfs.length})
             </button>
             <button
               type="button"
               onClick={() => setDirectoryTab("produtos")}
-              style={{
-                background: "none",
-                border: "none",
-                borderBottom: directoryTab === "produtos" ? "3px solid var(--primary)" : "3px solid transparent",
-                color: directoryTab === "produtos" ? "var(--primary)" : "var(--foreground-muted)",
-                padding: "0.6rem 1.5rem",
-                fontWeight: 800,
-                fontSize: "1.1rem",
-                cursor: "pointer",
-                transition: "all 0.2s ease"
-              }}
+              className={`${styles.directoryTab} ${directoryTab === "produtos" ? styles.directoryTabActive : ""}`}
             >
-              📦 Classificados de Produtos ({filteredProfs.flatMap(p => p.products || []).filter(p => p.status === "ativo").length})
+              Classificados ({filteredProfs.flatMap(p => p.products || []).filter(p => p.status === "ativo").length})
             </button>
           </div>
 
@@ -375,16 +346,16 @@ export default function HomePage() {
           {loading ? (
             <div className="directory-grid">
               {[1, 2, 3].map((n) => (
-                <div key={n} className={styles.card} style={{ opacity: 0.6, pointerEvents: "none" }}>
+                <div key={n} className={styles.card} style={{ pointerEvents: "none" }}>
                   <div className={styles.cardHeader}>
-                    <div className={styles.avatar} style={{ background: "#e0e0e0", width: "56px", height: "56px", borderRadius: "14px" }}></div>
-                    <div className={styles.rating} style={{ background: "#f0f0f0", width: "45px", height: "25px", border: "none" }}></div>
+                    <div className={`${styles.skeletonShimmer}`} style={{ width: "56px", height: "56px", borderRadius: "14px" }}></div>
+                    <div className={`${styles.skeletonShimmer}`} style={{ width: "52px", height: "28px", borderRadius: "8px" }}></div>
                   </div>
                   <div className={styles.cardContent}>
-                    <div style={{ height: "20px", background: "#e0e0e0", width: "70%", marginBottom: "10px", borderRadius: "4px" }}></div>
-                    <div style={{ height: "15px", background: "#f0f0f0", width: "50%", marginBottom: "15px", borderRadius: "4px" }}></div>
-                    <div style={{ height: "45px", background: "#f0f0f0", width: "100%", marginBottom: "15px", borderRadius: "8px" }}></div>
-                    <div style={{ height: "35px", background: "#e0e0e0", width: "100%", borderRadius: "12px" }}></div>
+                    <div className={`${styles.skeletonShimmer}`} style={{ height: "20px", width: "70%", marginBottom: "10px" }}></div>
+                    <div className={`${styles.skeletonShimmer}`} style={{ height: "15px", width: "50%", marginBottom: "16px" }}></div>
+                    <div className={`${styles.skeletonShimmer}`} style={{ height: "48px", width: "100%", marginBottom: "16px", borderRadius: "10px" }}></div>
+                    <div className={`${styles.skeletonShimmer}`} style={{ height: "36px", width: "100%", borderRadius: "12px" }}></div>
                   </div>
                 </div>
               ))}
@@ -507,7 +478,15 @@ export default function HomePage() {
                           {prod.imageUrl ? (
                             <img src={prod.imageUrl} alt={prod.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                           ) : (
-                            "📦"
+                            <div className={styles.productImgPlaceholder}>
+                              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                                <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+                                <line x1="12" y1="12" x2="12" y2="16"/>
+                                <line x1="10" y1="14" x2="14" y2="14"/>
+                              </svg>
+                              <span>Sem foto</span>
+                            </div>
                           )}
                           <span 
                             style={{ 

@@ -605,6 +605,64 @@
   margin-top: 0.8rem;
 }
 
+/* "ou" divider between modal CTAs */
+.orDivider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0.75rem 0;
+  color: var(--foreground-muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.orDivider::before,
+.orDivider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--border-color);
+}
+
+/* WhatsApp direct link inside modal */
+.btnWaDirect {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1rem;
+  border-radius: 12px;
+  border: 1.5px solid #25d36640;
+  background: #25d3660a;
+  color: #16a34a;
+  font-weight: 700;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  text-decoration: none;
+}
+
+.btnWaDirect:hover {
+  background: #25d36618;
+  border-color: #25d366;
+  transform: translateY(-1px);
+}
+
+/* Gallery empty state */
+.galleryEmptyState {
+  grid-column: 1 / -1;
+  padding: 3rem 1rem;
+  text-align: center;
+  color: var(--foreground-muted);
+  font-size: 0.95rem;
+  border: 1.5px dashed var(--border-color);
+  border-radius: 16px;
+  background: var(--background-alt);
+}
+
 /* Gallery zoom view */
 .zoomImage {
   max-width: 100%;
