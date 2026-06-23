@@ -10,6 +10,11 @@ type Props = {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
+const getValidImageUrl = (url?: string) => {
+  if (!url || url.startsWith("data:")) return null;
+  return url;
+};
+
 export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
   const { username } = await params;
   const sParams = await searchParams;
@@ -29,7 +34,7 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
     if (product) {
       const title = `📦 ${product.name} - R$ ${product.price.toFixed(2)} | ${prof.name}`;
       const desc = product.description || `Confira este produto anunciado por ${prof.name} na Central do Autônomo.`;
-      const imageUrl = product.imageUrl || prof.logoUrl || "https://central.me/images/og-default.png";
+      const imageUrl = getValidImageUrl(product.imageUrl) || getValidImageUrl(prof.logoUrl) || "https://centraldoautonomo.vercel.app/vercel.svg";
       return {
         title,
         description: desc,
@@ -63,7 +68,7 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
     if (service) {
       const title = `🛠️ ${service.name} - R$ ${service.price.toFixed(2)} / ${service.unit} | ${prof.name}`;
       const desc = service.description || `Contrate o serviço de ${service.name} com ${prof.name} na Central do Autônomo.`;
-      const imageUrl = prof.logoUrl || "https://central.me/images/og-default.png";
+      const imageUrl = getValidImageUrl(prof.logoUrl) || "https://centraldoautonomo.vercel.app/vercel.svg";
       return {
         title,
         description: desc,
@@ -93,7 +98,7 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
   // 3. Default Profile Metadata
   const title = `${prof.name} - ${prof.title} | Central do Autônomo`;
   const desc = prof.bio || `Confira os serviços, fotos e produtos de ${prof.name} na Central do Autônomo. Solicite seu orçamento direto por WhatsApp.`;
-  const imageUrl = prof.logoUrl || "https://central.me/images/og-default.png";
+  const imageUrl = getValidImageUrl(prof.logoUrl) || "https://centraldoautonomo.vercel.app/vercel.svg";
   return {
     title,
     description: desc,
