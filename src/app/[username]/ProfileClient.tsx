@@ -1553,20 +1553,47 @@ export default function ProfileClient({
                 {getPatternOverlay(professional.cardDesign?.patternType, professional.cardDesign?.accentColor)}
 
                 <div className={styles.shareCardHeader}>
-                  <div 
-                    className={styles.shareCardAvatar}
-                    style={{
-                      background: professional.cardDesign?.bg || professional.avatarColor || "var(--primary)",
-                      color: professional.cardDesign?.textColor || "#ffffff"
-                    }}
-                  >
-                    {getInitials(professional.name)}
-                  </div>
+                  {professional.logoUrl ? (
+                    <img 
+                      src={professional.logoUrl} 
+                      alt="Logo do Profissional" 
+                      className={styles.shareCardHeaderLogo} 
+                    />
+                  ) : (
+                    <div 
+                      className={styles.shareCardAvatar}
+                      style={{
+                        background: professional.cardDesign?.bg || professional.avatarColor || "var(--primary)",
+                        color: professional.cardDesign?.textColor || "#ffffff"
+                      }}
+                    >
+                      {getInitials(professional.name)}
+                    </div>
+                  )}
                   <div className={styles.shareCardProfInfo}>
                     <h4 className={styles.shareCardProfName}>{professional.name}</h4>
                     <p className={styles.shareCardProfTitle} style={{ color: professional.cardDesign?.accentColor || "var(--primary)" }}>{professional.title}</p>
                   </div>
                 </div>
+
+                {shareModalData.type === "produto" && (
+                  <div className={styles.shareCardImageWrapper}>
+                    {shareModalData.item.imageUrl ? (
+                      <img 
+                        src={shareModalData.item.imageUrl} 
+                        alt={shareModalData.item.name} 
+                        className={styles.shareCardImage} 
+                      />
+                    ) : (
+                      <div 
+                        className={styles.shareCardImagePlaceholder}
+                        style={{ background: shareModalData.item.imageColor || "var(--primary-glow)" }}
+                      >
+                        📦
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 <div className={styles.shareCardMain}>
                   <span className={styles.shareCardItemType}>

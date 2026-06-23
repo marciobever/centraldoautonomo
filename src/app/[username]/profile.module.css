@@ -1067,3 +1067,42 @@
   transform: translateY(-1px);
 }
 
+.shareCardHeaderLogo {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid white;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.shareCardImageWrapper {
+  width: 100%;
+  height: 120px;
+  border-radius: 12px;
+  overflow: hidden;
+  margin: 0.6rem 0;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  background: #f8fafc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.shareCardImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.shareCardImagePlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+}
+
+
