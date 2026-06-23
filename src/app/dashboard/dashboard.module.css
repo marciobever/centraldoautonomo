@@ -1290,7 +1290,8 @@
 /* --- 3D INTERACTIVE FLIP CARD STYLES --- */
 .cardPerspective {
   perspective: 1000px;
-  width: 340px;
+  width: 100%;
+  max-width: 340px;
   height: 200px;
   margin: 2rem auto;
 }
@@ -1518,5 +1519,36 @@
   color: var(--error);
   border: 1px solid oklch(54% 0.18 28 / 20%);
 }
+
+.logoLink {
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  transition: opacity 0.2s ease;
+}
+
+.logoLink:hover {
+  opacity: 0.8;
+}
+
+@media (max-width: 600px) {
+  .headerContainer {
+    padding: 0.7rem 1rem;
+  }
+  .logo {
+    font-size: 1.1rem;
+  }
+  .backBtn span,
+  .signOutBtn span {
+    display: none;
+  }
+  .backBtn,
+  .signOutBtn {
+    padding: 0.5rem;
+    gap: 0;
+  }
+}
+
+
 
 

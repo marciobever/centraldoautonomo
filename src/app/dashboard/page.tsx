@@ -2239,12 +2239,14 @@ Mensagem atual: "${billingMessage}"`
       {/* Navbar Header */}
       <header className={styles.header}>
         <div className={styles.headerContainer}>
-          <div className={styles.logo}>
-            <svg className={styles.logoIcon} width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-            </svg>
-            <span className="text-gradient">Painel do Profissional</span>
-          </div>
+          <Link href="/" className={styles.logoLink}>
+            <div className={styles.logo}>
+              <svg className={styles.logoIcon} width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+              </svg>
+              <span className="text-gradient">Painel do Profissional</span>
+            </div>
+          </Link>
           
           <div style={{ display: "flex", gap: "0.8rem", alignItems: "center" }}>
             <Link href={`/${professional.username}`} target="_blank" className={styles.backBtn}>
