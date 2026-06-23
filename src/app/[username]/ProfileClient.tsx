@@ -707,25 +707,12 @@ export default function ProfileClient({
                   R$ {service.price.toFixed(2)} <span style={{ fontSize: "0.8rem", color: "var(--foreground-muted)" }}>/ {service.unit}</span>
                 </div>
                 <div className={styles.serviceAction} style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
-                  <button 
+                  <button
                     onClick={(e) => handleShare(e, "servico", service.id)}
                     className={styles.btnShareSmall}
                     title="Compartilhar serviço"
-                    style={{
-                      background: "rgba(var(--primary-rgb), 0.05)",
-                      border: "1px solid rgba(var(--primary-rgb), 0.15)",
-                      borderRadius: "8px",
-                      padding: "6px 10px",
-                      fontSize: "0.85rem",
-                      cursor: "pointer",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "4px",
-                      color: "var(--primary)",
-                      transition: "all 0.2s ease"
-                    }}
                   >
-                    {sharedId === service.id ? "Copiado! ✓" : "🔗 Compartilhar"}
+                    {sharedId === service.id ? "✓ Copiado!" : "↗ Compartilhar"}
                   </button>
                   <button 
                     onClick={() => openEstimateModal(service)}
@@ -805,25 +792,12 @@ export default function ProfileClient({
                   </div>
                   <div className={styles.serviceAction} style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
                     {prod.status !== "esgotado" && (
-                      <button 
+                      <button
                         onClick={(e) => handleShare(e, "produto", prod.id)}
                         className={styles.btnShareSmall}
                         title="Compartilhar produto"
-                        style={{
-                          background: "rgba(var(--primary-rgb), 0.05)",
-                          border: "1px solid rgba(var(--primary-rgb), 0.15)",
-                          borderRadius: "8px",
-                          padding: "6px 10px",
-                          fontSize: "0.85rem",
-                          cursor: "pointer",
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "4px",
-                          color: "var(--primary)",
-                          transition: "all 0.2s ease"
-                        }}
                       >
-                        {sharedId === prod.id ? "Copiado! ✓" : "🔗 Compartilhar"}
+                        {sharedId === prod.id ? "✓ Copiado!" : "↗ Compartilhar"}
                       </button>
                     )}
                     <button 
@@ -1176,22 +1150,11 @@ export default function ProfileClient({
             <div style={{ display: "flex", alignItems: "center", gap: "0.8rem" }}>
               <h3>Detalhes do Produto</h3>
               {selectedProduct && (
-                <button 
+                <button
                   onClick={(e) => handleShare(e, "produto", selectedProduct.id)}
-                  style={{
-                    background: "rgba(var(--primary-rgb), 0.05)",
-                    border: "1px solid rgba(var(--primary-rgb), 0.15)",
-                    borderRadius: "6px",
-                    padding: "3px 8px",
-                    fontSize: "0.75rem",
-                    color: "var(--primary)",
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "4px"
-                  }}
+                  className={styles.btnShareSmallCompact}
                 >
-                  {sharedId === selectedProduct.id ? "Copiado! ✓" : "🔗 Compartilhar"}
+                  {sharedId === selectedProduct.id ? "✓ Copiado!" : "↗ Compartilhar"}
                 </button>
               )}
             </div>

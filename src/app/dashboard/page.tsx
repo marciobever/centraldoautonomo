@@ -5,7 +5,7 @@ import Link from "next/link";
 import styles from "./dashboard.module.css";
 import { Service, Lead, Professional, Expense, Appointment, Product } from "@/data/mockData";
 import { PROFESSIONAL_CATEGORIES, normalizeCategory } from "@/data/categories";
-import { auth, isFirebaseConfigured, storage } from "@/lib/firebase";
+import { auth, isFirebaseConfigured } from "@/lib/firebase";
 import QRCode from "qrcode";
 import { 
   signInWithEmailAndPassword, 
@@ -13,7 +13,6 @@ import {
   signOut,
   onAuthStateChanged
 } from "firebase/auth";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { 
   getLeads, 
   getProfessionalById, 
@@ -960,16 +959,22 @@ export default function DashboardPage() {
     });
   };
 
-  // Helper to upload image to Firebase Storage (falls back to Base64 if Firebase or storage is not available)
+  // Upload image to MinIO S3 via API route (falls back to Base64 if upload fails)
   const uploadImageAndGetUrl = async (file: File, path: string): Promise<string> => {
-    if (!isFirebaseConfigured || !storage) {
-      console.warn("Firebase Storage não configurado. Salvando em Base64 localmente.");
+    try {
+      const blob = await optimizeImageBlob(file);
+      const optimizedFile = new File([blob], file.name, { type: "image/jpeg" });
+      const formData = new FormData();
+      formData.append("file", optimizedFile);
+      formData.append("path", path);
+      const res = await fetch("/api/upload", { method: "POST", body: formData });
+      if (!res.ok) throw new Error(await res.text());
+      const { url } = await res.json();
+      return url;
+    } catch (err) {
+      console.warn("Upload S3 falhou, salvando em Base64 localmente.", err);
       return optimizeAndToBase64(file);
     }
-    const blob = await optimizeImageBlob(file);
-    const storageRef = ref(storage, path);
-    await uploadBytes(storageRef, blob);
-    return getDownloadURL(storageRef);
   };
 
   // Improve Bio with AI Gemini
