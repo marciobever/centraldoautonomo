@@ -1,6 +1,6 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth, setPersistence, browserLocalPersistence } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore, initializeFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
@@ -30,7 +30,9 @@ if (isFirebaseConfigured) {
         console.error("Firebase setPersistence error:", err);
       });
     }
-    db = getFirestore(app);
+    db = initializeFirestore(app, {
+      ignoreUndefinedProperties: true
+    });
     storage = getStorage(app);
   } catch (err) {
     console.error("Erro ao inicializar Firebase:", err);
